@@ -1,4 +1,4 @@
-module github.com/waldo-st/CLI_Todo_App.gitcd
+module github.com/waldo-st/CLI_Todo_App.git
 
 go 1.22.2
 

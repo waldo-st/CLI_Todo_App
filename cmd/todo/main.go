@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	todo "github.com/waldo-st/CLI_Todo_App.gitcd/internal"
+	todo "github.com/waldo-st/CLI_Todo_App.git/internal"
 )
 
 const (
