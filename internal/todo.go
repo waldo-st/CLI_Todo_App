@@ -1,14 +1,15 @@
 package todo
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"os"
+	"strconv"
+	"strings"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type task struct {
@@ -19,47 +20,79 @@ type task struct {
 	CompletaAt time.Time
 }
 
-type Todos map[string]task
+type Todos map[int]task
 
-func (t *Todos) Add(name, describe string) {
-	id := uuid.New()
-	todo := task{
-		Name:       name,
-		Describe:   describe,
-		Done:       false,
-		CreatAt:    time.Now(),
-		CompletaAt: time.Time{},
+var Read = bufio.NewReader(os.Stdin)
+
+func (t *Todos) Add(id int) error {
+	is_valid_name := true
+	is_valid_describ := true
+
+	for is_valid_name {
+		name, err := Collect_input("Saisie le nom de la tache: ")
+		if err != nil {
+			return err
+		}
+		if strings.TrimSpace(name) != "" {
+			for is_valid_describ {
+				describe, err := Collect_input("Saisie le nom de la description: ")
+				if err != nil {
+					return err
+				}
+				if strings.TrimSpace(describe) != "" {
+					// id := uuid.New()
+					todo := task{
+						Name:       name,
+						Describe:   describe,
+						Done:       false,
+						CreatAt:    time.Now(),
+						CompletaAt: time.Time{},
+					}
+
+					(*t)[id] = todo
+					is_valid_name = false
+					is_valid_describ = false
+				}
+			}
+
+		}
 	}
-
-	(*t)[id.String()] = todo
+	return nil
 }
 
 func (t *Todos) Complete(id string) error {
 	list_todo := *t
+	Id, err := strconv.Atoi(id)
+	if err != nil {
+		return err
+	}
 
-	if _, exist := list_todo[id]; !exist {
+	if _, exist := list_todo[Id]; !exist {
 		return errors.New("invalid index")
 	}
 
-	updateTask := list_todo[id] //copier la tache dans une variable local
+	updateTask := list_todo[Id] //copier la tache dans une variable local
 
 	// modifier les champs CompletaAt et Done
 	updateTask.CompletaAt = time.Now()
 	updateTask.Done = true
 
 	//et ensuite mettre a jour la tache dans le map
-	list_todo[id] = updateTask
+	list_todo[Id] = updateTask
 	return nil
 }
 
 func (t *Todos) Delete(id string) error {
 	list_todo := *t
-
-	if _, exist := list_todo[id]; !exist {
+	Id, err := strconv.Atoi(id)
+	if err != nil {
+		return err
+	}
+	if _, exist := list_todo[Id]; !exist {
 		return errors.New("invalid index")
 	}
 
-	delete(list_todo, id)
+	delete(list_todo, Id)
 	return nil
 }
 
