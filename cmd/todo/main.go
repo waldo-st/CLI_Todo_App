@@ -68,6 +68,11 @@ func main() {
 				fmt.Fprintln(os.Stdout, err.Error())
 				os.Exit(1)
 			}
+		case "Liste":
+			todos.Display_list()
+		default:
+			fmt.Fprintln(os.Stdout, "invalid command")
+			os.Exit(0)
 		}
 	}
 

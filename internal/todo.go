@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/alexeyco/simpletable"
 )
 
 type task struct {
@@ -130,10 +132,35 @@ func (t *Todos) Store_in_file(nameFile string) error {
 }
 
 func (t *Todos) Display_list() {
-	num := 0
-
-	for _, val := range *t {
-		num++
-		fmt.Fprintln(os.Stdout, num, "-", val.Name)
+	table := simpletable.New()
+	table.Header = &simpletable.Header{
+		Cells: []*simpletable.Cell{
+			{Align: simpletable.AlignCenter, Text: "#"},
+			{Align: simpletable.AlignCenter, Text: "Task"},
+			{Align: simpletable.AlignCenter, Text: "Describe"},
+			{Align: simpletable.AlignCenter, Text: "Done?"},
+			{Align: simpletable.AlignRight, Text: "CreatedAt"},
+			{Align: simpletable.AlignRight, Text: "CompletedAt"},
+		},
 	}
+
+	for idx, item := range *t {
+		r := []*simpletable.Cell{
+			{Text: fmt.Sprintf("%d", idx)},
+			{Text: item.Name},
+			{Text: item.Describe},
+			{Text: fmt.Sprintf("%t", item.Done)},
+			{Text: item.CreatAt.Format(time.RFC822)},
+			{Text: item.CompletaAt.Format(time.RFC822)},
+		}
+		table.Body.Cells = append(table.Body.Cells, r)
+	}
+
+	table.Footer = &simpletable.Footer{Cells: []*simpletable.Cell{
+		{Align: simpletable.AlignCenter, Span: 6, Text: "Todo from scratch"},
+	}}
+
+	table.SetStyle(simpletable.StyleUnicode)
+
+	table.Println()
 }
